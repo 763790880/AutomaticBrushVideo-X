@@ -11,6 +11,8 @@ namespace X学堂
     {
         public static ChromeDriver Create(ref int port)
         {
+            var chromeDriverService = ChromeDriverService.CreateDefaultService();
+            chromeDriverService.HideCommandPromptWindow = true;
             #region 启动浏览器调试
 
             var options = new ChromeOptions();
@@ -40,11 +42,9 @@ namespace X学堂
 
             options.AddArgument("hide_console");
             //options.AddArgument("--hide");
-
-            ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             #endregion
-            var driver = new ChromeDriver(service, options);
-            port = service.Port;
+            var driver = new ChromeDriver(chromeDriverService, options);
+            port = chromeDriverService.Port;
             
             return driver;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace X学堂
         /// <summary>
         /// 网址
         /// </summary>
+        [Display(Name ="网址")]
         public string Url
         {
             get => _Url;
@@ -30,6 +32,7 @@ namespace X学堂
         /// <summary>
         /// 完成状态
         /// </summary>
+        [Display(Name = "完成状态")]
         public string Status {
             get => _Status;
             set
@@ -44,6 +47,7 @@ namespace X学堂
         /// <summary>
         /// 进度
         /// </summary>
+        [Display(Name = "进度")]
         public string Schedule {
             get => _Schedule;
             set
@@ -58,6 +62,7 @@ namespace X学堂
         /// <summary>
         /// Guid
         /// </summary>
+        [Display(Name = "标识")]
         public string Guid { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;

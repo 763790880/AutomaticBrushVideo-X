@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:X学堂"
         mc:Ignorable="d"
-        Title="刷课时" Height="450" Width="800" Icon="/微信图片_20231220132153.jpg" Closed="Window_Closed" Closing="Window_Closing">
+        Title="刷课时" Height="450" Width="800" Icon="/微信图片_20231220132153.jpg" >
     <Grid>
         <Label Content="用户名：" HorizontalAlignment="Left" Margin="60,50,0,0" VerticalAlignment="Top"/>
         <Label Content="密码：" HorizontalAlignment="Left" Margin="301,50,0,0" VerticalAlignment="Top"/>
@@ -13,13 +13,13 @@
         <TextBox x:Name="UserName" HorizontalAlignment="Left" Margin="118,54,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="17600293388" />
         <TextBox x:Name="Url" HorizontalAlignment="Left" Margin="135,103,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="607"/>
         <Label Content="刷课时地址" HorizontalAlignment="Left" Margin="60,99,0,0" VerticalAlignment="Top"/>
-        <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="60,129,40,83" AutoGenerateColumns="False">
+        <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=10}" Margin="60,129,40,83" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Url" Binding="{Binding Url}" />
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
-                <DataGridTextColumn Header="Schedule" Binding="{Binding Schedule}" />
-                <DataGridTextColumn Header="Guid" Binding="{Binding Guid}" />
-                <DataGridTemplateColumn Header="Action">
+                <DataGridTextColumn Header="地址" Binding="{Binding Url}" Width="200" />
+                <DataGridTextColumn Header="状态" Binding="{Binding Status}" />
+                <DataGridTextColumn Header="进度" Binding="{Binding Schedule}" />
+                <DataGridTextColumn Header="标识" Binding="{Binding Guid}" Width="50" />
+                <DataGridTemplateColumn Header="操作">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="删除" Click="Button_Shanchu" />

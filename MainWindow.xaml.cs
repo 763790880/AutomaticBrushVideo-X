@@ -23,6 +23,7 @@ namespace X学堂
     public partial class MainWindow : Window
     {
         private ObservableCollection<XStatus> websiteList;
+        private ObservableCollectionBusiness _observable;
         private ConcurrentDictionary<int, IWebDriver> webDrivers = new ConcurrentDictionary<int, IWebDriver>();
         private List<string> urls = new List<string>();
         private static bool _Auto = false;
@@ -32,19 +33,12 @@ namespace X学堂
             InitializeComponent();
             // 初始化 ObservableCollection
             websiteList = new ObservableCollection<XStatus>();
+            _observable = new ObservableCollectionBusiness(websiteList, webDrivers);
             // 将 ObservableCollection 绑定到 DataGrid
             this.dataGrid.ItemsSource = websiteList;
 
         }
-        /// <summary>
-        /// 登录按钮
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
 
-        }
         /// <summary>
         /// 开刷按钮
         /// </summary>
@@ -82,192 +76,17 @@ namespace X学堂
         /// <param name="web"></param>
         /// <param name="guid"></param>
         /// <param name="b"></param>
-        private void CreateNewTimer(ChromeDriver web, string guid,string url, ref bool b,ref int whileCount)
+        private void CreateNewTimer(ChromeDriver web)
         {
             Thread.Sleep(5000);
-            UpdateStatus(web, guid, "未完成", url,ref b,ref whileCount);
-            if(!b)
-                return;
             // 查找续看按钮
-            FindYesButton(web);
+            MonitorBusiness.FindYesButton(web);
             // 查找确认按钮
-            FindConfirmButton(web);
+            MonitorBusiness.FindConfirmButton(web);
             // 查找提交按钮
-            FindSubmitButton(web);
+            MonitorBusiness.FindSubmitButton(web);
         }
-        /// <summary>
-        /// 查找签到确认
-        /// </summary>
-        /// <returns></returns>
-        private void FindConfirmButton(ChromeDriver web)
-        {
-            try
-            {
-                // 使用 Selenium 提供的查找元素方法
-                var confirmButton = web.FindElements(By.ClassName("dialog-footer-confirmed"));
-                // 如果找到确认按钮，则模拟点击
-                if (confirmButton != null)
-                {
-                    foreach (var item in confirmButton)
-                    {
-                        // 获取元素的 display 属性值
-                        string displayValue = item.GetCssValue("display");
-                        // 判断元素是否可见
-                        bool isVisible = !string.IsNullOrEmpty(displayValue) && !displayValue.Equals("none", StringComparison.OrdinalIgnoreCase);
-                        if (item.Enabled && isVisible)
-                        {
-                            try
-                            {
-                                item.Click();
-                            }
-                            catch (Exception)
-                            {
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // 没有找到按钮，可以添加一些处理逻辑或返回 null
-            }
-        }
-        /// <summary>
-        /// 查找续看按钮
-        /// </summary>
-        /// <returns></returns>
-        private void FindYesButton(IWebDriver web)
-        {
-            try
-            {
-                By ele = By.CssSelector("button.vjs-big-play-button");
-                var e = web.FindElement(ele);
-                if (e != null)
-                {
-                    // 获取元素的 display 属性值
-                    string displayValue = e.GetCssValue("display");
-                    // 判断元素是否可见
-                    bool isVisible = !string.IsNullOrEmpty(displayValue) && !displayValue.Equals("none", StringComparison.OrdinalIgnoreCase);
-                    if (e.Enabled && isVisible)
-                        e.Click();
-                }
-                //vjs-big-play-button
-                By elementsLocator = By.CssSelector("div.course-btn.course-btn-yes");
-                // 使用 Selenium 提供的查找元素方法
-                var yesButton = web.FindElement(elementsLocator);
-                if (yesButton != null)
-                {
-                    yesButton.Click();
-                }
-            }
-            catch (Exception ex)
-            {
-                // 没有找到按钮，可以添加一些处理逻辑或返回 null
-            }
-        }
-        /// <summary>
-        /// 查找提交确认
-        /// </summary>
-        /// <returns></returns>
-        private void FindSubmitButton(ChromeDriver web)
-        {
-            try
-            {
-                // 使用 Selenium 提供的查找元素方法
-                var submitButton = web.FindElement(By.ClassName("close-btn"));
-                // 如果找到确认按钮，则模拟点击
-                if (submitButton != null)
-                {
-                    submitButton.Click();
-                }
-            }
-            catch (Exception)
-            {
-                // 没有找到按钮，可以添加一些处理逻辑或返回 null
-            }
-        }
-        /// <summary>
-        /// 修改行状态
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="newStatus"></param>
-        private void UpdateStatus(ChromeDriver driver, string guid, string newStatus, string url,ref bool b,ref int whileCount)
-        {
-            var Schedule = "";
-            var name = "";
-            try
-            {
-                IWebElement element2 = driver.FindElement(By.CssSelector("div.course_list_progress.flex-1.dis-flex.dis-col"));
-                if (element2 != null)
-                    Schedule = element2.Text.Substring(0, 10);
-                IWebElement element1 = driver.FindElement(By.CssSelector("span.c666.f14.last-span"));
-                if (element1 != null)
-                    name = element1.Text;
-            }
-            catch (Exception)
-            {
-            }
-            if (Schedule.Contains("已学")||(whileCount > 3 && string.IsNullOrWhiteSpace(name)))
-            {
-                b = false;
-                webDrivers.TryRemove(int.Parse(guid), out _);
-                DeleteStatus(guid);
-                RWFile.SuccesTask(RWFile.GetVal(url));
-            }
-            // 根据网址找到关联行，并修改状态
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                foreach (var item in websiteList)
-                {
-                    if (item.Guid == guid)
-                    {
-                        if (!string.IsNullOrWhiteSpace(newStatus))
-                            item.Status = newStatus;
-                        if (!string.IsNullOrWhiteSpace(Schedule))
-                            item.Schedule = Schedule;
-                        if (!string.IsNullOrWhiteSpace(name))
-                            item.Url = name;
-                    }
-                }
-            });
 
-        }
-        private void AddStatus(ChromeDriver driver, string guid)
-        {
-            var name = "";
-            var Schedule = "";
-            try
-            {
-                IWebElement element1 = driver.FindElement(By.CssSelector("span.c666.f14.last-span"));
-                if (element1 != null)
-                    name = element1.Text;
-                IWebElement element2 = driver.FindElement(By.CssSelector("div.course_list_progress.flex-1.dis-flex.dis-col"));
-                if (element2 != null)
-                    Schedule = element2.Text;
-            }
-            catch (Exception)
-            {
-                name = "";
-                Schedule = "";
-            }
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                websiteList.Add(new XStatus { Url = name, Status = "未完成", Guid = guid, Schedule = Schedule });
-                this.Url.Text = "";
-                this.Url.IsReadOnly = false;
-                //MessageBox.Show("后台执行中！");
-            });
-        }
-        private void DeleteStatus(string guid)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                var model = websiteList.FirstOrDefault(f => f.Guid == guid);
-                websiteList.Remove(model);
-                //MessageBox.Show($"已完成课时《{model.Url}》");
-            });
-        }
         private void Login(string name, string pwd, string url, ManualResetEventSlim manualResetEvent)
         {
 
@@ -295,13 +114,16 @@ namespace X学堂
             //GetHttp(driver);
             // 登录成功后继续导航到新的页面
             driver.Navigate().GoToUrl(url);
-            AddStatus(driver, guid);//增加grid数据
+            _observable.AddStatus(driver, guid);//增加grid数据
             manualResetEvent.Set();
 
             while (b && webDrivers.ContainsKey(chromeDriverPort))
             {
-                CreateNewTimer(driver, guid, url, ref b,ref whileCount);
-                whileCount=whileCount+1;
+                if (!b)
+                    return;
+                CreateNewTimer(driver);
+                _observable.UpdateStatus(driver, guid, "未完成", url, ref b, ref whileCount);
+                whileCount =whileCount+1;
             }
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -320,10 +142,6 @@ namespace X学堂
         }
         #endregion
         #region 没点用
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
-        }
         private bool Loging(string name, string pwd, ChromeDriver driver)
         {
             #region 登录
@@ -356,42 +174,6 @@ namespace X学堂
             loginButton.Click();
             return true;
             #endregion
-        }
-        public void GetHttp(ChromeDriver driver)
-        {
-            var devTools = driver as IDevTools;
-            var session = devTools.GetDevToolsSession();
-            // 启用网络日志
-            session.SendCommand(new EnableCommandSettings() {
-                MaxTotalBufferSize = 10000000,
-                MaxResourceBufferSize = 5000000,
-                MaxPostDataSize= 5000000,
-            });
-
-            var lastend = new string[] {".js",".png",".jpg" };
-            // 订阅网络请求事件
-            session.DevToolsEventReceived += (a, response) =>
-            {
-                var link="https://api.moxueyuan.com/appapi.php/index?r=/apiCourse/";
-                var resp= response.EventData?.SelectToken("response");
-                var _type = response.EventData?.SelectToken("type");
-                var _url=resp?.SelectToken("url");
-                if (_type!=null&& _type.ToString()== "XHR" && _url != null&& !lastend.Contains(_url.ToString().Substring(_url.ToString().Length-3)))
-                {
-                    Console.WriteLine(  1);
-                }
-                if (_url!=null&&_url.Contains(link))
-                {
-                    MessageBox.Show(response.EventData.ToString());
-                }
-                
-            };
-            session.LogMessage += (a, response) =>
-            {
-                Console.WriteLine(response.Message);
-            };
-            // 打开网页
-            driver.Navigate().GoToUrl("https://bjnxhl.study.moxueyuan.com/new/course?id=0&level=0&page=2");
         }
         /// <summary>
         /// 我觉得电脑行，在加一个任务
