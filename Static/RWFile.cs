@@ -41,7 +41,7 @@ namespace X学堂
         {
             try
             {
-                string filePath = "已完成.txt";
+                string filePath = "File/已完成.txt";
                 lock (_lock)
                 {
                     RWFile.AppendToFile(filePath, $",{id}");
@@ -56,7 +56,7 @@ namespace X学堂
         }
         public static void PnProgressTask(string id)
         {
-            string filePath = "进行中.txt";
+            string filePath = "File/进行中.txt";
             lock (_lock)
             {
                 RWFile.AppendToFile(filePath, $",{id}");
@@ -86,7 +86,7 @@ namespace X学堂
         }
         public static void LogTask(string msg)
         {
-            string filePath = "EX.log";
+            string filePath = "File/EX.log";
             lock (_lock)
             {
                 RWFile.AppendToFile(filePath, $"{msg}");
