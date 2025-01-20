@@ -3,6 +3,8 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.DevTools;
 using OpenQA.Selenium.DevTools.V120.Network;
 using OpenQA.Selenium.Support.UI;
+using Polly;
+using Polly.Retry;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -23,6 +25,7 @@ namespace X学堂
     public partial class MainWindow : Window
     {
         private ObservableCollection<XStatus> websiteList;
+        private RetryPolicy _policy;
         private ObservableCollectionBusiness _observable;
         private ConcurrentDictionary<int, IWebDriver> webDrivers = new ConcurrentDictionary<int, IWebDriver>();
         private List<string> urls = new List<string>();
@@ -36,7 +39,12 @@ namespace X学堂
             _observable = new ObservableCollectionBusiness(websiteList, webDrivers);
             // 将 ObservableCollection 绑定到 DataGrid
             this.dataGrid.ItemsSource = websiteList;
-
+            _policy = Policy
+                        .Handle<Exception>()
+                        .WaitAndRetry(3, retryAttempt => TimeSpan.FromSeconds(2), (exception, timeSpan, retryCount, context) =>
+                        {
+                            RWFile.LogTask($"重试失败:{exception.Message}");
+                        });
         }
 
         /// <summary>
@@ -93,22 +101,22 @@ namespace X学堂
             var b = true;
             int whileCount = 0;//循环检测次数
             // 获取ChromeDriver的实际端口号
-            int chromeDriverPort=0;
-            var driver=ChromeHelp.Create(ref chromeDriverPort);
+            int chromeDriverPort = 0;
+            var driver = ChromeHelp.Create(ref chromeDriverPort);
             var guid = chromeDriverPort.ToString();
             Application.Current.Dispatcher.Invoke(() =>
             {
                 webDrivers.TryAdd(chromeDriverPort, driver);
             });
             //登录
-            var isLogin=Loging(name,pwd,driver);
+            var isLogin = Loging(name, pwd, driver);
             if (!isLogin)
             {
                 driver.Quit();
                 driver.Dispose();
                 return;
             }
-                
+
             // 等待一段时间确保登录成功（你可能需要调整等待时间）
             Thread.Sleep(1000);
             //GetHttp(driver);
@@ -123,7 +131,7 @@ namespace X学堂
                     return;
                 CreateNewTimer(driver);
                 _observable.UpdateStatus(driver, guid, "未完成", url, ref b, ref whileCount);
-                whileCount =whileCount+1;
+                whileCount = whileCount + 1;
             }
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -152,24 +160,22 @@ namespace X学堂
             // 等待一段时间确保页面加载完成（你可能需要调整等待时间）
             try
             {
-                IWebElement usernameInput = wait.Until(driver => driver.FindElement(By.XPath("//input[@placeholder='账号']")));
-                usernameInput.SendKeys(name);
+                _policy.Execute(() =>
+                {
+                    IWebElement usernameInput = wait.Until(driver => driver.FindElement(By.XPath("//input[@placeholder='账号']")));
+                    usernameInput.SendKeys(name);
+                });
+
             }
             catch (WebDriverTimeoutException ex)
             {
-                RWFile.LogTask("我超时了");
-                // 在超时时处理异常
-                return false;
+                MessageBox.Show(ex.Message);
             }
-            // 输入账号
-            
 
-            // 输入密码
             IWebElement passwordInput = driver.FindElement(By.XPath("//input[@placeholder='密码']"));
             passwordInput.SendKeys(pwd);
 
 
-            // 找到登录按钮并点击
             IWebElement loginButton = driver.FindElement(By.ClassName("loginProBtn"));
             loginButton.Click();
             return true;
@@ -182,7 +188,7 @@ namespace X学堂
         /// <param name="e"></param>
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            _TaskCount = _TaskCount+1;
+            _TaskCount = _TaskCount + 1;
             MessageBox.Show($"现在并行最大数：{_TaskCount}");
         }
         private void Button_Click_4(object sender, RoutedEventArgs e)
@@ -227,10 +233,10 @@ namespace X学堂
             var pwd = this.Pwd.Password;
             Task.Run(() =>
             {
-                urls= RWFile.GetAllTask();
+                urls = RWFile.GetAllTask();
                 urls = urls.Distinct().ToList();
                 ///判断是否已经
-                WhileTask(name,pwd);
+                WhileTask(name, pwd);
             });
             _Auto = true;
         }
@@ -243,14 +249,14 @@ namespace X学堂
         {
             var person = (XStatus)((Button)sender).DataContext;
             var guid = person?.Guid;
-            if (!string.IsNullOrWhiteSpace(guid)&&int.TryParse(guid ,out int chromeDriverPort))
+            if (!string.IsNullOrWhiteSpace(guid) && int.TryParse(guid, out int chromeDriverPort))
             {
                 if (webDrivers.TryGetValue(chromeDriverPort, out IWebDriver web))
                 {
                     web.Quit();
                     web.Dispose();
                     webDrivers.TryRemove(chromeDriverPort, out _);
-                    var model=websiteList.First(f => f.Guid == guid);
+                    var model = websiteList.First(f => f.Guid == guid);
                     websiteList.Remove(model);
                 }
             }
@@ -258,7 +264,7 @@ namespace X学堂
             return;
         }
 
-        
+
 
         private void Button_Click_Log(object sender, RoutedEventArgs e)
         {
@@ -267,7 +273,7 @@ namespace X学堂
             MessageBox.Show(str);
         }
 
-        private void WhileTask(string name,string pwd)
+        private void WhileTask(string name, string pwd)
         {
             ManualResetEventSlim manualResetEvent = new ManualResetEventSlim(false);
             while (urls.Count > 1)
@@ -297,12 +303,12 @@ namespace X学堂
                     else
                         Thread.Sleep(8000);
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     RWFile.LogTask("引发终止的错误" + ex.Message);
-                    WhileTask(name,pwd);
+                    WhileTask(name, pwd);
                 }
-               
+
             }
         }
     }
