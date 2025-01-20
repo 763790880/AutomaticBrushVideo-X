@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:X学堂"
         mc:Ignorable="d"
-        Title="刷课时" Height="450" Width="800" Icon="/微信图片_20231220132153.jpg" >
+        Title="刷课时" Height="450" Width="800" Icon="/File/微信图片_20231220132153.jpg" >
     <Grid>
         <Label Content="用户名：" HorizontalAlignment="Left" Margin="60,50,0,0" VerticalAlignment="Top"/>
         <Label Content="密码：" HorizontalAlignment="Left" Margin="301,50,0,0" VerticalAlignment="Top"/>

@@ -65,9 +65,9 @@ namespace X学堂
         public static List<string> GetAllTask()
         {
             List<string> list = new List<string>();
-            var strall = RWFile.ReadFromFile("所有课程ID.txt");
-            var ppall = RWFile.ReadFromFile("进行中.txt");
-            var sall = RWFile.ReadFromFile("已完成.txt");
+            var strall = RWFile.ReadFromFile("File/所有课程ID.txt");
+            var ppall = RWFile.ReadFromFile("File/进行中.txt");
+            var sall = RWFile.ReadFromFile("File/已完成.txt");
             var stralls = strall.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             var ppalls = ppall.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             var salls = sall.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();

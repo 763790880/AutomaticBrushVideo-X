@@ -18,20 +18,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="微信图片_20231220132153.jpg" />
+    <Resource Include="File\微信图片_20231220132153.jpg" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="EX.log">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="已完成.txt">
+    <None Update="File\已完成.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="所有课程ID.txt">
+    <None Update="File\所有课程ID.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="进行中.txt">
+    <None Update="File\进行中.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
