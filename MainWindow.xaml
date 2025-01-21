@@ -15,9 +15,10 @@
         <Label Content="刷课时地址" HorizontalAlignment="Left" Margin="60,99,0,0" VerticalAlignment="Top"/>
         <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=10}" Margin="60,129,40,83" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="地址" Binding="{Binding Url}" Width="200" />
+                <DataGridTextColumn Header="地址" Binding="{Binding Url}" Width="220" />
                 <DataGridTextColumn Header="状态" Binding="{Binding Status}" />
                 <DataGridTextColumn Header="进度" Binding="{Binding Schedule}" />
+                <DataGridTextColumn Header="监听时间" Binding="{Binding DetectionTime}" Width="120" />
                 <DataGridTextColumn Header="标识" Binding="{Binding Guid}" Width="50" />
                 <DataGridTemplateColumn Header="操作">
                     <DataGridTemplateColumn.CellTemplate>

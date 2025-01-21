@@ -49,7 +49,8 @@ namespace X学堂
                         {
                             RWFile.LogTask($"重试失败:{exception.Message}");
                         });
-            _hrrpHelper = new Helper(); ;
+            _hrrpHelper = new Helper();
+            this.Closing += Window_Closed;
         }
 
         /// <summary>
@@ -201,20 +202,21 @@ namespace X学堂
             _TaskCount = _TaskCount - 1;
             MessageBox.Show($"现在并行最大数：{_TaskCount}");
         }
-        private void Window_Closed(object sender, EventArgs e)
+        private void Window_Closed(object sender, System.ComponentModel.CancelEventArgs e)
         {
             foreach (var driver in webDrivers)
             {
                 try
                 {
                     driver.Value.Quit();
+                    driver.Value.Dispose();
                 }
                 catch (Exception)
                 {
                     MessageBox.Show("关闭失败了");
                 }
-
             }
+            MessageBox.Show("关闭");
         }
         #endregion
         /// <summary>
@@ -263,10 +265,12 @@ namespace X学堂
                     webDrivers.TryRemove(chromeDriverPort, out _);
                     var model = websiteList.First(f => f.Guid == guid);
                     websiteList.Remove(model);
+                    MessageBox.Show("删除成功");
+                    return;
                 }
             }
-            MessageBox.Show("删除成功");
-            return;
+            MessageBox.Show("删除失败!!!!");
+
         }
 
 

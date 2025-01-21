@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace X学堂
@@ -8,6 +9,7 @@ namespace X学堂
         protected string _Status;
         protected string _Schedule;
         protected string _Url;
+        protected DateTime _Time;
         /// <summary>
         /// 网址
         /// </summary>
@@ -59,6 +61,18 @@ namespace X学堂
         /// </summary>
         [Display(Name = "标识")]
         public string Guid { get; set; }
+        public DateTime DetectionTime
+        {
+            get => _Time;
+            set
+            {
+                if (_Time != value)
+                {
+                    _Time = value;
+                    OnPropertyChanged("DetectionTime");
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string name)

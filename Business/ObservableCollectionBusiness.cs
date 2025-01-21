@@ -38,6 +38,7 @@ namespace X学堂
             catch (Exception)
             {
             }
+            UpdateStatus(guid);
             if (Schedule.Contains("已学") || (whileCount > 3 && string.IsNullOrWhiteSpace(name)))
             {
                 b = false;
@@ -61,7 +62,7 @@ namespace X学堂
                     }
                 }
             });
-
+            
         }
         public void AddStatus(ChromeDriver driver, string guid)
         {
@@ -96,7 +97,15 @@ namespace X学堂
             {
                 var model = _websiteList.FirstOrDefault(f => f.Guid == guid);
                 _websiteList.Remove(model);
-                //MessageBox.Show($"已完成课时《{model.Url}》");
+            });
+        }
+        public void UpdateStatus(string guid)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var model = _websiteList.FirstOrDefault(f => f.Guid == guid);
+                if(model!=null)
+                    model.DetectionTime=DateTime.Now;
             });
         }
     }
