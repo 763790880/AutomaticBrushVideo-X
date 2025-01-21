@@ -11,14 +11,14 @@ namespace X学堂
 
         private readonly static object _lock = new object();
         // 追加内容到文件
-        private static void AppendToFile(string filePath, string content)
+        private static void AppendToFile(string filePath, string content, bool append=true)
         {
             try
             {
                 string basePath = AppDomain.CurrentDomain.BaseDirectory;
                 string path = System.IO.Path.Combine(basePath, filePath);
                 // 以追加模式打开文件
-                using (StreamWriter writer = new StreamWriter(path, true))
+                using (StreamWriter writer = new StreamWriter(path, append))
                 {
                     // 追加内容到文件
                     writer.WriteLine(content);
@@ -29,6 +29,7 @@ namespace X学堂
                 Console.WriteLine($"Error appending to file: {ex.Message}");
             }
         }
+
         private static string ReadFromFile(string path)
         {
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
@@ -60,6 +61,14 @@ namespace X学堂
             lock (_lock)
             {
                 RWFile.AppendToFile(filePath, $",{id}");
+            }
+        }
+        public static void Reset(string str)
+        {
+            string filePath = "File/所有课程ID.txt";
+            lock (_lock)
+            {
+                RWFile.AppendToFile(filePath, str,false);
             }
         }
         public static List<string> GetAllTask()

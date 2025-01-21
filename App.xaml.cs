@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Windows;
 
 namespace X学堂
@@ -13,5 +9,16 @@ namespace X学堂
     /// </summary>
     public partial class App : Application
     {
+        private IServiceProvider _serviceProvider;
+        protected override void OnStartup(StartupEventArgs e)
+        {
+         
+            var services = new ServiceCollection();
+
+            services.AddSingleton<MainWindow>();
+            services.AddSingleton<Helper>();
+            _serviceProvider = services.BuildServiceProvider();
+            base.OnStartup(e);
+        }
     }
 }

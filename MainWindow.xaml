@@ -33,6 +33,7 @@
         <Button Content="  +  " HorizontalAlignment="Left" Margin="671,20,0,0" VerticalAlignment="Top" Click="Button_Click_3"/>
         <Button Content="  -  " HorizontalAlignment="Left" Margin="747,20,0,0" VerticalAlignment="Top" Click="Button_Click_4"/>
         <Button Content="Log" HorizontalAlignment="Left" Margin="60,20,0,0" VerticalAlignment="Top" Click="Button_Click_Log"/>
+        <Button Content="重新读取未完成与进行中的任务" HorizontalAlignment="Left" Margin="587,374,0,0" VerticalAlignment="Top" Click="ReadBack"/>
 
     </Grid>
 </Window>

@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using Newtonsoft.Json.Linq;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.DevTools;
 using OpenQA.Selenium.DevTools.V120.Network;
@@ -10,6 +11,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +28,7 @@ namespace X学堂
     {
         private ObservableCollection<XStatus> websiteList;
         private RetryPolicy _policy;
+        private Helper _hrrpHelper;
         private ObservableCollectionBusiness _observable;
         private ConcurrentDictionary<int, IWebDriver> webDrivers = new ConcurrentDictionary<int, IWebDriver>();
         private List<string> urls = new List<string>();
@@ -45,6 +48,7 @@ namespace X学堂
                         {
                             RWFile.LogTask($"重试失败:{exception.Message}");
                         });
+            _hrrpHelper = new Helper(); ;
         }
 
         /// <summary>
@@ -310,6 +314,37 @@ namespace X学堂
                 }
 
             }
+        }
+        /// <summary>
+        /// 读取所有未完成与进行中的任务
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReadBack(object sender, RoutedEventArgs e)
+        {
+            int chromeDriverPort = 0;
+            var driver = ChromeHelp.Create(ref chromeDriverPort);
+            //登录
+            var name = this.UserName.Text;
+            var pwd = this.Pwd.Password;
+            var isLogin = Loging(name, pwd, driver);
+            var cookies = driver.Manage().Cookies.AllCookies;
+            var httpClient = _hrrpHelper.CreateHttpClient();
+            foreach (var cookie in cookies)
+            {
+                httpClient.DefaultRequestHeaders.Add(cookie.Name, cookie.Value);
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Cookie", $"{cookie.Name}={cookie.Value}");
+            }
+            string url = "https://api.moxueyuan.com/appapi.php/index?r=/apiCourse/byCategoryCache&eid=25415&token=b2f8b9f38f8f6dda9833c7821bde81c0&userid=0883cb78_20f0_2c6e_a9d1_55ea27e5fcbe&version=6.0.0&platform=pcweb&language=zh_CN&userPortalID=389&userNikkatsu=232&requestTimestamp=1737440104312&_requestPageUrl=https%253A%252F%252Fbjnxhl.study.moxueyuan.com%252Fnew%252Fcourse%253Fid%253D0%2526level%253D0%2526state%253D0%252C1&page=1&pagesize=32000&sort=top_time-desc&search[studyState]=0,1&search[ischarge]=&search[mediatype]=&search[catid]=0&search[label]=&type=";
+            HttpResponseMessage response =  httpClient.GetAsync(url).Result;
+            response.EnsureSuccessStatusCode();
+            string jsonResponse = response.Content.ReadAsStringAsync().Result;
+            JObject obj = JObject.Parse(jsonResponse);
+            var arrystr = obj.SelectToken("data").ToString();
+            var ids = JArray.Parse(arrystr).Select(f=>f.SelectToken("id").ToString()).ToList();
+            var str=string.Join(",", ids);
+            RWFile.Reset(str);
+            MessageBox.Show("已重置所有课程!");
         }
     }
 }
