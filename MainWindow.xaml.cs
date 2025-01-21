@@ -33,6 +33,7 @@ namespace X学堂
         private ConcurrentDictionary<int, IWebDriver> webDrivers = new ConcurrentDictionary<int, IWebDriver>();
         private List<string> urls = new List<string>();
         private static bool _Auto = false;
+        public static bool ButtonIsEnbled=true;
         private static int _TaskCount = 8;//最大并行任务数
         public MainWindow()
         {
@@ -323,6 +324,7 @@ namespace X学堂
         private void ReadBack(object sender, RoutedEventArgs e)
         {
             int chromeDriverPort = 0;
+            ButtonIsEnbled=false;
             var driver = ChromeHelp.Create(ref chromeDriverPort);
             //登录
             var name = this.UserName.Text;
@@ -347,6 +349,7 @@ namespace X学堂
             driver.Quit();
             driver.Dispose();
             MessageBox.Show("已重置所有课程!");
+            ButtonIsEnbled = true;
         }
     }
 }

@@ -9,7 +9,7 @@
     <Grid>
         <Label Content="用户名：" HorizontalAlignment="Left" Margin="60,50,0,0" VerticalAlignment="Top"/>
         <Label Content="密码：" HorizontalAlignment="Left" Margin="301,50,0,0" VerticalAlignment="Top"/>
-        <Button Content="开始刷起来" HorizontalAlignment="Left" Margin="491,34,0,0" VerticalAlignment="Top" Height="49" Width="132" Click="Button_Click_1"/>
+        <Button x:Name="button1" Content="开始刷起来" HorizontalAlignment="Left" Margin="491,34,0,0" VerticalAlignment="Top" Height="49" Width="132" Click="Button_Click_1" IsEnabled="{Binding ButtonIsEnbled}"  />
         <TextBox x:Name="UserName" HorizontalAlignment="Left" Margin="118,54,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="17600293388" />
         <TextBox x:Name="Url" HorizontalAlignment="Left" Margin="135,103,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="607"/>
         <Label Content="刷课时地址" HorizontalAlignment="Left" Margin="60,99,0,0" VerticalAlignment="Top"/>
@@ -29,11 +29,11 @@
             </DataGrid.Columns>
         </DataGrid>
         <PasswordBox x:Name="Pwd" HorizontalAlignment="Left" Margin="347,54,0,0" VerticalAlignment="Top" Width="120" Password="Cc1234567890-="/>
-        <Button Content="自动刷非培训任务" HorizontalAlignment="Left" Margin="671,54,0,0" VerticalAlignment="Top" Click="Button_Click_2" Height="33"/>
+        <Button x:Name="button2" Content="自动刷非培训任务" HorizontalAlignment="Left" Margin="671,54,0,0" VerticalAlignment="Top" Click="Button_Click_2" Height="33" IsEnabled="{Binding ButtonIsEnbled}"/>
         <Button Content="  +  " HorizontalAlignment="Left" Margin="671,20,0,0" VerticalAlignment="Top" Click="Button_Click_3"/>
         <Button Content="  -  " HorizontalAlignment="Left" Margin="747,20,0,0" VerticalAlignment="Top" Click="Button_Click_4"/>
         <Button Content="Log" HorizontalAlignment="Left" Margin="60,20,0,0" VerticalAlignment="Top" Click="Button_Click_Log"/>
-        <Button Content="重新读取未完成与进行中的任务" HorizontalAlignment="Left" Margin="587,374,0,0" VerticalAlignment="Top" Click="ReadBack"/>
+        <Button x:Name="button" Content="重新读取未完成与进行中的任务" HorizontalAlignment="Left" Margin="587,374,0,0" VerticalAlignment="Top" Click="ReadBack" IsEnabled="{Binding ButtonIsEnbled}"/>
 
     </Grid>
 </Window>
