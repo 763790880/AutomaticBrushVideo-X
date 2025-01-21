@@ -344,6 +344,8 @@ namespace X学堂
             var ids = JArray.Parse(arrystr).Select(f=>f.SelectToken("id").ToString()).ToList();
             var str=string.Join(",", ids);
             RWFile.Reset(str);
+            driver.Quit();
+            driver.Dispose();
             MessageBox.Show("已重置所有课程!");
         }
     }
