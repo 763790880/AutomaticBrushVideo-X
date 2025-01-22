@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.DevTools;
-using OpenQA.Selenium.DevTools.V120.Network;
 using OpenQA.Selenium.Support.UI;
 using Polly;
 using Polly.Retry;
@@ -12,12 +10,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml.Linq;
 
 namespace X学堂
 {
@@ -354,6 +351,28 @@ namespace X学堂
             driver.Dispose();
             MessageBox.Show("已重置所有课程!");
             ButtonIsEnbled = true;
+        }
+
+        private void ScreenShot(object sender, RoutedEventArgs e)
+        {
+            var person = (XStatus)((Button)sender).DataContext;
+            var guid = person?.Guid;
+            if (!string.IsNullOrWhiteSpace(guid) && int.TryParse(guid, out int chromeDriverPort))
+            {
+                if (webDrivers.TryGetValue(chromeDriverPort, out IWebDriver driver))
+                {
+                    if (driver is ITakesScreenshot screenshotDriver)
+                    {
+                        driver.Manage().Window.Maximize();
+                        Screenshot screenshot = screenshotDriver.GetScreenshot();
+                        // 将截图保存为文件
+                        string filePath = $"File/截图/{guid}.png";
+                        screenshot.SaveAsFile(filePath);
+                        MessageBox.Show($"截图已保存到: {filePath}");
+                    }
+                    return;
+                }
+            }
         }
     }
 }

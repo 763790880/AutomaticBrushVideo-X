@@ -18,14 +18,17 @@
                 <DataGridTextColumn Header="地址" Binding="{Binding Url}" Width="220" />
                 <DataGridTextColumn Header="状态" Binding="{Binding Status}" />
                 <DataGridTextColumn Header="进度" Binding="{Binding Schedule}" />
-                <DataGridTextColumn Header="监听时间" Binding="{Binding DetectionTime}" Width="120" />
-                <DataGridTextColumn Header="标识" Binding="{Binding Guid}" Width="50" />
+                <DataGridTextColumn Header="监听时间" Binding="{Binding DetectionTime}" Width="180" />
                 <DataGridTemplateColumn Header="操作">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="删除" Click="Button_Shanchu" />
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="删除" Click="Button_Shanchu" Margin="2" />
+                                <Button Content="截屏" Click="ScreenShot" Margin="2"/>
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
+                    
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
