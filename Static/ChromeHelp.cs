@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using X学堂.Static;
 
 namespace X学堂
 {
     public class ChromeHelp
     {
-        public static ChromeDriver Create(ref int port)
+        public static MyChromeDriver Create(ref int port)
         {
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
 #if !DEBUG
@@ -45,7 +46,7 @@ namespace X学堂
             options.AddArgument("hide_console");
             //options.AddArgument("--hide");
             #endregion
-            var driver = new ChromeDriver(chromeDriverService, options);
+            var driver = new MyChromeDriver(chromeDriverService, options);
             port = chromeDriverService.Port;
             
             return driver;

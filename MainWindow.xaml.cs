@@ -133,6 +133,8 @@ namespace X学堂
             {
                 if (!b)
                     return;
+                if(driver.IsColse)
+                    return;
                 CreateNewTimer(driver);
                 _observable.UpdateStatus(driver, guid, "未完成", url, ref b, ref whileCount);
                 whileCount = whileCount + 1;
