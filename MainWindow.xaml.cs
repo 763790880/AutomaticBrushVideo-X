@@ -127,7 +127,8 @@ namespace X学堂
             driver.Navigate().GoToUrl(url);
             _observable.AddStatus(driver, guid);//增加grid数据
             manualResetEvent.Set();
-
+            Thread.Sleep(1000);
+            MonitorBusiness.ListenForClassAndClickVideo(driver);
             while (b && webDrivers.ContainsKey(chromeDriverPort))
             {
                 if (!b)

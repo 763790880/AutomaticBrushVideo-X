@@ -102,6 +102,56 @@ namespace X学堂
                 // 没有找到按钮，可以添加一些处理逻辑或返回 null
             }
         }
-      
+
+        /// <summary>
+        /// 如果视频被暂停
+        /// </summary>
+        /// <param name="web"></param>
+        public static void ListenForClassAndClickVideo(ChromeDriver web)
+        {
+            // 执行 JavaScript 创建 MutationObserver 并开始监听
+            ((IJavaScriptExecutor)web).ExecuteScript(@"
+            (function() {
+                var playerBox = document.getElementById('player-box');
+                if (!playerBox) return;
+
+                // 获取第一个子 div
+                var targetNode = playerBox.querySelector('div:first-child');
+                if (!targetNode) return;
+
+                var observerOptions = {
+                    attributes: true, // 监听属性变化
+                    attributeFilter: ['class'] // 只监听 'class' 属性的变化
+                };
+
+                var callback = function(mutationsList, observer) {
+                    for(var mutation of mutationsList) {
+                        if (mutation.type === 'attributes' && targetNode.classList.contains('vjs-ended')) {
+                            console.log('vjs-ended class detected.');
+                            
+                            // 尝试点击 video 标签
+                            var videoElement = document.querySelector('video');
+                            if (videoElement) {
+                                videoElement.click();
+                                console.log('Clicked the video element.');
+                            } else {
+                                console.error('No video element found.');
+                            }
+
+                            observer.disconnect(); // 停止观察
+                        }
+                    }
+                };
+
+                var observer = new MutationObserver(callback);
+                observer.observe(targetNode, observerOptions);
+
+                // 检查是否已经结束（防止错过初始状态）
+                if (targetNode.classList.contains('vjs-ended')) {
+                    callback([{ type: 'attributes' }], observer);
+                }
+            })();
+        ");
+        }
     }
 }
