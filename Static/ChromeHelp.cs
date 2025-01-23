@@ -20,8 +20,9 @@ namespace X学堂
 
             var options = new ChromeOptions();
             // 启用 headless 模式
-            //options.AddArgument("--headless");
-
+#if !DEBUG
+            options.AddArgument("--headless");
+#endif
             // 禁用 GPU 加速（某些系统上可能需要）
             //options.AddArgument("--disable-gpu");
 
@@ -45,7 +46,7 @@ namespace X学堂
 
             options.AddArgument("hide_console");
             //options.AddArgument("--hide");
-            #endregion
+#endregion
             var driver = new MyChromeDriver(chromeDriverService, options);
             port = chromeDriverService.Port;
             
