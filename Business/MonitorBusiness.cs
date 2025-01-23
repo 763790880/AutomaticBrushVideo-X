@@ -1,11 +1,7 @@
-﻿using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace X学堂
 {
@@ -57,9 +53,10 @@ namespace X学堂
             try
             {
                 By ele = By.CssSelector("button.vjs-big-play-button");
-                var e = web.FindElement(ele);
-                if (e != null)
+                var es = web.FindElements(ele);
+                if (es.Count>0)
                 {
+                    var e=es.First();
                     // 获取元素的 display 属性值
                     string displayValue = e.GetCssValue("display");
                     // 判断元素是否可见
@@ -70,10 +67,10 @@ namespace X学堂
                 //vjs-big-play-button
                 By elementsLocator = By.CssSelector("div.course-btn.course-btn-yes");
                 // 使用 Selenium 提供的查找元素方法
-                var yesButton = web.FindElement(elementsLocator);
-                if (yesButton != null)
+                var yesButtons = web.FindElements(elementsLocator);
+                if (yesButtons.Count>0)
                 {
-                    yesButton.Click();
+                    yesButtons.First().Click();
                 }
             }
             catch (Exception ex)
@@ -90,11 +87,11 @@ namespace X学堂
             try
             {
                 // 使用 Selenium 提供的查找元素方法
-                var submitButton = web.FindElement(By.ClassName("close-btn"));
+                var submitButtons = web.FindElements(By.ClassName("close-btn"));
                 // 如果找到确认按钮，则模拟点击
-                if (submitButton != null)
+                if (submitButtons.Count>0)
                 {
-                    submitButton.Click();
+                    submitButtons.First().Click();
                 }
             }
             catch (Exception)
@@ -126,7 +123,7 @@ namespace X学堂
 
                 var callback = function(mutationsList, observer) {
                     for(var mutation of mutationsList) {
-                        if (mutation.type === 'attributes' && targetNode.classList.contains('vjs-ended')) {
+                        if (mutation.type === 'attributes' && (targetNode.classList.contains('vjs-ended')||targetNode.classList.contains('vjs-paused'))) {
                             console.log('vjs-ended class detected.');
                             
                             // 尝试点击 video 标签
@@ -152,6 +149,33 @@ namespace X学堂
                 }
             })();
         ");
+        }
+        public static void Continue(ChromeDriver web)
+        {
+            try
+            {
+                IWebElement playerBox = null;
+                var playerBoxs = web.FindElements(By.Id("player-box"));
+                if (playerBoxs.Count > 0)
+                {
+                    playerBox= playerBoxs[0];
+                    IWebElement firstChildDiv = playerBox.FindElement(By.CssSelector("div:first-child"));
+                    // 如果初始状态下就有 vjs-ended 类，则直接点击视频
+                    if (firstChildDiv.GetAttribute("class").Contains("vjs-ended") || firstChildDiv.GetAttribute("class").Contains("vjs-paused"))
+                    {
+                        IWebElement videoElement = web.FindElement(By.TagName("video"));
+                        videoElement.Click();
+                        Console.WriteLine("Initial state had vjs-ended class; clicked the video.");
+                        return;
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+
         }
     }
 }

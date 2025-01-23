@@ -96,6 +96,7 @@ namespace X学堂
             MonitorBusiness.FindConfirmButton(web);
             // 查找提交按钮
             MonitorBusiness.FindSubmitButton(web);
+            MonitorBusiness.Continue(web);
         }
 
         private void Login(string name, string pwd, string url, ManualResetEventSlim manualResetEvent)
@@ -128,7 +129,7 @@ namespace X学堂
             _observable.AddStatus(driver, guid);//增加grid数据
             manualResetEvent.Set();
             Thread.Sleep(1000);
-            MonitorBusiness.ListenForClassAndClickVideo(driver);
+            
             while (b && webDrivers.ContainsKey(chromeDriverPort))
             {
                 if (!b)

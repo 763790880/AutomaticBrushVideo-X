@@ -20,7 +20,7 @@ namespace X学堂
 
             var options = new ChromeOptions();
             // 启用 headless 模式
-            options.AddArgument("--headless");
+            //options.AddArgument("--headless");
 
             // 禁用 GPU 加速（某些系统上可能需要）
             //options.AddArgument("--disable-gpu");
